@@ -1,0 +1,40 @@
+from langchain_core.messages import SystemMessage
+from config.llm import llm
+from prompts.system_prompt import SYSTEM_PROMPT
+from tools.calculator import calculator
+from tools.search import search_tool
+from tools.stocks import get_stock_price
+
+
+tools = [
+    calculator,
+    search_tool,
+    get_stock_price
+]
+
+llm_with_tools = llm.bind_tools(tools)
+
+def chat_node(state):
+
+    print("=" * 50)
+    print("Entered chat node")
+
+    messages = state["messages"]
+
+    print(messages)
+
+    response = None
+
+    for chunk in llm_with_tools.stream(
+    [SystemMessage(content=SYSTEM_PROMPT)] + messages
+    ):
+     if response is None:
+        response = chunk
+    else:
+        response += chunk
+
+    print("Gemini responded")
+
+    return {
+        "messages": [response]
+    }
