@@ -8,3 +8,7 @@ credentials/token.json
 
 uploads/
 vector_db/
+
+ragtest.py
+check.py
+test.py
