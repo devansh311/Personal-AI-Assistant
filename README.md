@@ -1,90 +1,113 @@
 # 🤖 Personal AI Assistant
 
-A modular AI Assistant built with **LangGraph**, **Streamlit**, and **OpenRouter**. It supports multi-turn conversations, tool calling, and persistent chat history using SQLite.
-
-## ✨ Features
-
-- 💬 Interactive chat interface built with Streamlit
-- 🧠 LangGraph-based conversational workflow
-- 🔄 Persistent conversation memory using SQLite
-- 🛠️ Tool calling support
-  - Calculator
-  - Web Search
-  - Stock Price Lookup
-- 🤖 OpenRouter LLM integration
-- ⚙️ Modular and scalable project structure
-- 🔐 Environment variable management using `.env`
+A modular AI Assistant built with **LangGraph**, **Streamlit**, and **OpenRouter**, capable of reasoning, using tools, and maintaining conversation memory.
 
 ---
 
-## 📂 Project Structure
+## 🚀 Features
 
-```
-personal-ai-assistant/
-│
-├── app.py                 # Streamlit frontend
-├── backend.py             # LangGraph workflow
-│
-├── config/
-│   ├── __init__.py
-│   ├── llm.py
-│   └── settings.py
-│
-├── graph/
-│   ├── builder.py
-│   ├── nodes.py
-│   └── state.py
-│
-├── prompts/
-│   └── system_prompt.py
-│
-├── tools/
-│   ├── calculator.py
-│   ├── search.py
-│   └── stocks.py
-│
-├── ui/
-│   ├── session.py
-│   └── sidebar.py
-│
-├── utils/
-│   └── formatter.py
-│
-├── database/
-│
-└── .gitignore
-```
+- 💬 Conversational AI powered by OpenRouter
+- 🧠 Persistent chat memory using SQLite
+- 🔄 Multi-step reasoning with LangGraph
+- 🧮 Calculator Tool
+- 🌐 Web Search Tool
+- 📈 Stock Price Tool
+- 🌦️ Live Weather Tool
+- 📊 LangSmith tracing for debugging and observability
+- 🎨 Clean Streamlit chat interface
+- 🔧 Modular architecture for easy feature expansion
 
 ---
 
 ## 🛠️ Tech Stack
 
-- Python
-- Streamlit
+### AI Framework
 - LangGraph
 - LangChain
+
+### LLM
 - OpenRouter
+
+### Frontend
+- Streamlit
+
+### Database
 - SQLite
 
-## 🧠 Current Capabilities
+### APIs
+- OpenWeather API
+- Tavily Search API
+- Alpha Vantage API
 
-- Natural language conversations
-- Multi-turn chat
-- Persistent chat sessions
-- Tool calling
-- Calculator
-- Search
-- Stock Price Lookup
+### Observability
+- LangSmith
 
 ---
 
-## 🚧 Roadmap
+## 📂 Project Structure
 
-- [ ] Persistent user memory
-- [ ] PDF RAG support
-- [ ] Vector Database
-- [ ] Multi-Agent workflow
-- [ ] Gmail & Calendar integration
-- [ ] Weather integration
-- [ ] Streaming responses
-- [ ] Docker deployment
+```text
+personal-ai-agent/
+│
+├── app.py
+├── backend.py
+├── config/
+│   ├── llm.py
+│   └── settings.py
+├── database/
+├── graph/
+│   ├── builder.py
+│   ├── nodes.py
+│   └── state.py
+├── prompts/
+│   └── system_prompt.py
+├── tools/
+│   ├── calculator.py
+│   ├── search.py
+│   ├── stocks.py
+│   └── weather.py
+├── ui/
+├── utils/
+├── requirements.txt
+└── README.md
+```
+
+---
+---
+
+## 🧠 Current Toolset
+
+| Tool | Description |
+|------|-------------|
+| Calculator | Solves mathematical expressions |
+| Web Search | Retrieves up-to-date web information |
+| Stock Price | Fetches real-time stock prices |
+| Weather | Provides current weather conditions |
+
+---
+
+## 📊 LangSmith Tracing
+
+LangSmith is integrated for:
+
+- Graph execution visualization
+- Tool call inspection
+- LLM request & response tracing
+- Latency analysis
+- Error debugging
+- Conversation replay
+
+---
+
+## 📌 Upcoming Features
+
+- 📅 Google Calendar Integration
+- 📧 Gmail Integration
+- 🗺️ Maps & Places Search
+- 🧠 Long-Term Memory
+- 📂 Document Q&A (RAG)
+- 🎤 Voice Assistant
+- 🌐 Web Browser Agent
+- ⚡ Streaming Responses
+
+---
