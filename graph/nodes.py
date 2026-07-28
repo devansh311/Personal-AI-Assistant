@@ -9,11 +9,14 @@ from tools.stocks import get_stock_price
 
 from tools.weather import get_weather
 
+from tools.calendar import get_upcoming_events
+
 tools = [
     calculator,
     search_tool,
     get_stock_price,
-    get_weather
+    get_weather,
+    get_upcoming_events
 ]
 
 llm_with_tools = llm.bind_tools(tools).with_config(

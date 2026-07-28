@@ -10,6 +10,7 @@ For:
 - web search → use search
 - stock prices → use stock tool
 - weather,temperature,humdity,forecast,rain-> use weather tool
+- metings,schedules,events,calendars ->use calendar tool
 
 If no tool is needed, answer directly.
 """

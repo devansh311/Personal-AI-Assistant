@@ -1,7 +1,5 @@
-from config.llm import llm
+from tools.calendar import authenticate
 
-print("Sending request...")
+service = authenticate()
 
-response = llm.invoke("Say hello in one sentence.")
-
-print(response.content)
+print("Authentication Successful!")
