@@ -5,3 +5,6 @@ __pycache__/
 database/
 credentials/credentials.json
 credentials/token.json
+
+uploads/
+vector_db/
