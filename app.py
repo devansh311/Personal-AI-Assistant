@@ -48,31 +48,32 @@ for msg in current_chat["messages"]:
 # ------------------ USER INPUT ------------------ #
 
 query = st.chat_input("Ask anything...")
-
 if query:
 
     # Store user message
-    current_chat["messages"].append({  "role": "user","content": query})
+    current_chat["messages"].append(
+        {
+            "role": "user",
+            "content": query
+        }
+    )
 
     # Display user message
     with st.chat_message("user"):
-
         st.markdown(query)
 
     # Invoke chatbot
-    assistant_placeholder = st.empty()
+    result = chatbot.invoke(
+        {
+            "messages": [
+                HumanMessage(content=query)
+            ]
+        },
+        config=CONFIG
+    )
 
-    answer = ""
+    answer = result["messages"][-1].content
 
-    for chunk in chatbot.stream(
-    {
-        "messages": [
-            HumanMessage(content=query)
-        ]
-    },
-    config=CONFIG
-    ):
-     pass
     # Store assistant message
     current_chat["messages"].append(
         {
@@ -83,5 +84,4 @@ if query:
 
     # Display assistant message
     with st.chat_message("assistant"):
-
         st.markdown(answer)

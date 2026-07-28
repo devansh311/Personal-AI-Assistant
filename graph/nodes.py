@@ -1,10 +1,11 @@
 from langchain_core.messages import SystemMessage
+
 from config.llm import llm
 from prompts.system_prompt import SYSTEM_PROMPT
+
 from tools.calculator import calculator
 from tools.search import search_tool
 from tools.stocks import get_stock_price
-
 
 tools = [
     calculator,
@@ -13,6 +14,7 @@ tools = [
 ]
 
 llm_with_tools = llm.bind_tools(tools)
+
 
 def chat_node(state):
 
@@ -23,17 +25,11 @@ def chat_node(state):
 
     print(messages)
 
-    response = None
+    response = llm_with_tools.invoke(
+        [SystemMessage(content=SYSTEM_PROMPT)] + messages
+    )
 
-    for chunk in llm_with_tools.stream(
-    [SystemMessage(content=SYSTEM_PROMPT)] + messages
-    ):
-     if response is None:
-        response = chunk
-    else:
-        response += chunk
-
-    print("Gemini responded")
+    print("LLM responded:", repr(response.content))
 
     return {
         "messages": [response]
