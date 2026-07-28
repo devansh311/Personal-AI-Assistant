@@ -16,7 +16,11 @@ tools = [
     get_weather
 ]
 
-llm_with_tools = llm.bind_tools(tools)
+llm_with_tools = llm.bind_tools(tools).with_config(
+    {
+        "run_name":"chat model"
+    }
+)
 
 
 def chat_node(state):

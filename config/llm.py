@@ -1,15 +1,19 @@
-# from langchain_google_genai import ChatGoogleGenerativeAI
-
-# from config.settings import GOOGLE_API_KEY
-
-# llm = ChatGoogleGenerativeAI(
-#     model="gemini-2.5-flash",
-#     google_api_key=GOOGLE_API_KEY,
-#     temperature=0
-# )
 
 from langchain_openai import ChatOpenAI
 from config.settings import OPENROUTER_API_KEY
+
+import os
+
+from config.settings import (
+    OPENROUTER_API_KEY,
+    LANGSMITH_API_KEY,
+    LANGSMITH_TRACING,
+    LANGSMITH_PROJECT
+)
+
+os.environ["LANGSMITH_API_KEY"] = LANGSMITH_API_KEY
+os.environ["LANGSMITH_TRACING"] = LANGSMITH_TRACING
+os.environ["LANGSMITH_PROJECT"] = LANGSMITH_PROJECT
 
 llm = ChatOpenAI(
     model="openrouter/free",
