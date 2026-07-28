@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 
 from backend import chatbot
@@ -22,7 +23,34 @@ initialize_session()
 
 render_sidebar()
 
-# Current Chat
+# ------------------ PDF UPLOAD ------------------ #
+
+st.sidebar.divider()
+st.sidebar.subheader("📄 Upload Documents")
+
+uploaded_file = st.sidebar.file_uploader(
+    "Upload a PDF",
+    type=["pdf"]
+)
+
+if uploaded_file is not None:
+
+    os.makedirs("uploads", exist_ok=True)
+
+    file_path = os.path.join("uploads", uploaded_file.name)
+
+    if not os.path.exists(file_path):
+
+        with open(file_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+
+        st.sidebar.success(f"✅ {uploaded_file.name} uploaded successfully!")
+
+    else:
+        st.sidebar.info("📁 This PDF already exists.")
+
+# ------------------ CURRENT CHAT ------------------ #
+
 current_chat = st.session_state.threads[
     st.session_state.current_thread
 ]
@@ -42,12 +70,12 @@ st.title("🤖 Personal AI Assistant")
 for msg in current_chat["messages"]:
 
     with st.chat_message(msg["role"]):
-
         st.markdown(msg["content"])
 
 # ------------------ USER INPUT ------------------ #
 
 query = st.chat_input("Ask anything...")
+
 if query:
 
     # Store user message

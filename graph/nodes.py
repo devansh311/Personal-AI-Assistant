@@ -11,12 +11,15 @@ from tools.weather import get_weather
 
 from tools.calendar import get_upcoming_events
 
+from tools.rag import ask_documents
+
 tools = [
     calculator,
     search_tool,
     get_stock_price,
     get_weather,
-    get_upcoming_events
+    get_upcoming_events,
+    ask_documents
 ]
 
 llm_with_tools = llm.bind_tools(tools).with_config(
