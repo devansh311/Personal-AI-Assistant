@@ -9,6 +9,7 @@ For:
 - calculations → use calculator
 - web search → use search
 - stock prices → use stock tool
+- weather,temperature,humdity,forecast,rain-> use weather tool
 
 If no tool is needed, answer directly.
 """

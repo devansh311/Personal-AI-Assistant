@@ -7,10 +7,13 @@ from tools.calculator import calculator
 from tools.search import search_tool
 from tools.stocks import get_stock_price
 
+from tools.weather import get_weather
+
 tools = [
     calculator,
     search_tool,
-    get_stock_price
+    get_stock_price,
+    get_weather
 ]
 
 llm_with_tools = llm.bind_tools(tools)
