@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: ai_assistant_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: aiassistant
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d aiassistant"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: ai_assistant_app
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    environment:
+      # Override DATABASE_URL inside Docker
+      # app connects to 'postgres' service, not localhost
+      DATABASE_URL: postgresql://admin:password@postgres:5432/aiassistant
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./uploads:/app/uploads
+      - ./vector_db:/app/vector_db
+      - ./credentials:/app/credentials
+
+volumes:
+  postgres_data:

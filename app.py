@@ -5,7 +5,7 @@ from backend import chatbot
 from langchain_core.messages import HumanMessage
 from langgraph.types import Command
 
-from ui.session import initialize_session
+from ui.session import initialize_session, save_threads
 from ui.sidebar import render_sidebar
 from utils.formatter import extract_text
 
@@ -27,10 +27,7 @@ render_sidebar()
 st.sidebar.divider()
 st.sidebar.subheader("📄 Upload Documents")
 
-uploaded_file = st.sidebar.file_uploader(
-    "Upload a PDF",
-    type=["pdf"]
-)
+uploaded_file = st.sidebar.file_uploader("Upload a PDF", type=["pdf"])
 
 if uploaded_file is not None:
     os.makedirs("uploads", exist_ok=True)
@@ -43,11 +40,7 @@ if uploaded_file is not None:
     else:
         st.sidebar.info("📁 This PDF already exists.")
 
-# ------------------ CURRENT CHAT ------------------ #
-
-current_chat = st.session_state.threads[
-    st.session_state.current_thread
-]
+# ------------------ CONFIG ------------------ #
 
 CONFIG = {
     "configurable": {
@@ -59,24 +52,35 @@ CONFIG = {
 
 st.title("🤖 Personal AI Assistant")
 
-# ------------------ DISPLAY OLD MESSAGES ------------------ #
+# ------------------ DISPLAY MESSAGES FROM POSTGRESQL ------------------ #
 
-for msg in current_chat["messages"]:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
+graph_state = chatbot.get_state(CONFIG)
+messages = graph_state.values.get("messages", [])
+
+for msg in messages:
+    if msg.type == "human":
+        with st.chat_message("user"):
+            st.markdown(msg.content)
+    elif msg.type == "ai" and msg.content:
+        with st.chat_message("assistant"):
+            st.markdown(msg.content)
 
 # ------------------ USER INPUT ------------------ #
 
 query = st.chat_input("Ask anything...")
 
 if query:
-
-    # Store and display user message
-    current_chat["messages"].append({"role": "user", "content": query})
     with st.chat_message("user"):
         st.markdown(query)
 
-    # Check if graph is currently interrupted (waiting for confirmation)
+    # Auto-update thread title from first message
+    current_thread = st.session_state.current_thread
+    if st.session_state.threads[current_thread]["title"] == "New Chat":
+        title = query[:30] + "..." if len(query) > 30 else query
+        st.session_state.threads[current_thread]["title"] = title
+        save_threads(st.session_state.threads)
+
+    # Check if graph is interrupted
     graph_state = chatbot.get_state(CONFIG)
     is_interrupted = bool(
         graph_state.tasks and
@@ -84,19 +88,14 @@ if query:
     )
 
     if is_interrupted:
-        # Graph is paused — resume it with user's response
-        result = chatbot.invoke(
-            Command(resume=query),
-            config=CONFIG
-        )
+        result = chatbot.invoke(Command(resume=query), config=CONFIG)
     else:
-        # Normal flow — send as new message
         result = chatbot.invoke(
             {"messages": [HumanMessage(content=query)]},
             config=CONFIG
         )
 
-    # Check if graph paused AFTER this invoke (new interrupt)
+    # Check if new interrupt happened
     new_state = chatbot.get_state(CONFIG)
     new_interrupt = bool(
         new_state.tasks and
@@ -104,27 +103,13 @@ if query:
     )
 
     if new_interrupt:
-        # Graph paused — show interrupt confirmation message to user
         for task in new_state.tasks:
             if task.interrupts:
                 interrupt_msg = task.interrupts[0].value
-
-                current_chat["messages"].append({
-                    "role": "assistant",
-                    "content": interrupt_msg
-                })
-
                 with st.chat_message("assistant"):
                     st.markdown(interrupt_msg)
                 break
     else:
-        # Normal response — get last AI message
         answer = extract_text(result["messages"][-1])
-
-        current_chat["messages"].append({
-            "role": "assistant",
-            "content": answer
-        })
-
         with st.chat_message("assistant"):
             st.markdown(answer)

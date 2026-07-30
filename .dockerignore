@@ -1,0 +1,9 @@
+.env
+credentials/
+vector_db/
+database/
+uploads/
+myenv/
+__pycache__/
+*.pyc
+.git/

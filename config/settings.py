@@ -10,3 +10,8 @@ OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
 LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
 LANGSMITH_TRACING = os.getenv("LANGSMITH_TRACING")
 LANGSMITH_PROJECT = os.getenv("LANGSMITH_PROJECT")
+
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql://admin:password@localhost:5433/aiassistant"
+)

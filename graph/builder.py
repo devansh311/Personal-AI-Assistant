@@ -1,20 +1,23 @@
-import sqlite3
-
+import psycopg
 from langchain_core.messages import ToolMessage
 
 from graph.state import ChatState
-from graph.nodes import chat_node, calendar_confirmation_node, tools
+from graph.nodes import (
+    chat_node,
+    calendar_confirmation_node,
+    tools
+)
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode, tools_condition
-from langgraph.checkpoint.sqlite import SqliteSaver
+from langgraph.checkpoint.postgres import PostgresSaver
+from config.settings import DATABASE_URL
 
 
 def after_tools_routing(state):
     """
     After ToolNode executes, check which tool ran last.
-    If prepare_calendar_event ran → go to HITL confirmation node.
-    Otherwise → go back to chat node as usual.
+    Routes to appropriate HITL node or back to chat.
     """
     messages = state["messages"]
 
@@ -28,7 +31,6 @@ def after_tools_routing(state):
 
 
 graph = StateGraph(ChatState)
-
 tool_node = ToolNode(tools)
 
 # Add nodes
@@ -38,13 +40,7 @@ graph.add_node("calendar_confirmation", calendar_confirmation_node)
 
 # Add edges
 graph.add_edge(START, "chat")
-
-graph.add_conditional_edges(
-    "chat",
-    tools_condition
-)
-
-# Replace old tools → chat edge with conditional routing
+graph.add_conditional_edges("chat", tools_condition)
 graph.add_conditional_edges(
     "tools",
     after_tools_routing,
@@ -54,10 +50,15 @@ graph.add_conditional_edges(
     }
 )
 
-# Calendar confirmation always ends after completing
 graph.add_edge("calendar_confirmation", END)
 
-conn = sqlite3.connect("database/chatbot.db", check_same_thread=False)
-memory = SqliteSaver(conn)
 
-chatbot = graph.compile(checkpointer=memory)
+# PostgreSQL connection — autocommit required for PostgresSaver
+conn = psycopg.connect(DATABASE_URL, autocommit=True)
+memory = PostgresSaver(conn)
+memory.setup()  # creates checkpoint tables if they don't exist
+
+chatbot = graph.compile(
+    checkpointer=memory,
+    interrupt_before=["calendar_confirmation"]
+)

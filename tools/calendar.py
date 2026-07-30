@@ -140,3 +140,4 @@ def create_event_direct(event_data: dict) -> str:
         return f"❌ Invalid date/time format: {str(e)}"
     except Exception as e:
         return f"❌ Failed to create event: {str(e)}"
+
