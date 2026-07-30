@@ -8,7 +8,8 @@ A modular, production-grade AI assistant built with **LangGraph**, **Streamlit**
 
 ### 🧠 Core AI
 - Conversational AI powered by **Groq (Llama 3.1 8B)**
-- 
+- Short-term conversational memory using **PostgreSQL + LangGraph checkpointer**
+— conversation history persists within each thread across page refreshes
 - Multi-thread conversation management — switch between chats, threads survive refresh
 - Multi-step reasoning with **LangGraph state graph**
 - Full **LangSmith** tracing for observability and debugging
